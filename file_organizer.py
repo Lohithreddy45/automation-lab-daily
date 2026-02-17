@@ -1,8 +1,7 @@
 import os
 import shutil
-
-# Change this path to the folder you want to organize
-SOURCE_FOLDER = os.getcwd()
+import argparse
+from datetime import datetime
 
 FILE_TYPES = {
     "Images": [".jpg", ".jpeg", ".png", ".gif"],
@@ -11,23 +10,42 @@ FILE_TYPES = {
     "Others": []
 }
 
-for file in os.listdir(SOURCE_FOLDER):
-    file_path = os.path.join(SOURCE_FOLDER, file)
+def log(message):
+    with open("organizer.log", "a", encoding="utf-8") as f:
+        f.write(f"{datetime.now()} - {message}\n")
 
-    if os.path.isfile(file_path):
-        moved = False
 
-        for folder, extensions in FILE_TYPES.items():
-            if any(file.lower().endswith(ext) for ext in extensions):
-                target_folder = os.path.join(SOURCE_FOLDER, folder)
-                os.makedirs(target_folder, exist_ok=True)
-                shutil.move(file_path, os.path.join(target_folder, file))
-                moved = True
-                break
+def organize(folder):
+    if not os.path.exists(folder):
+        print("Folder does not exist.")
+        return
 
-        if not moved:
-            target_folder = os.path.join(SOURCE_FOLDER, "Others")
-            os.makedirs(target_folder, exist_ok=True)
-            shutil.move(file_path, os.path.join(target_folder, file))
+    for file in os.listdir(folder):
+        file_path = os.path.join(folder, file)
 
-print("Files organized successfully!")
+        if os.path.isfile(file_path):
+            moved = False
+
+            for category, extensions in FILE_TYPES.items():
+                if any(file.lower().endswith(ext) for ext in extensions):
+                    target = os.path.join(folder, category)
+                    os.makedirs(target, exist_ok=True)
+                    shutil.move(file_path, os.path.join(target, file))
+                    log(f"Moved {file} -> {category}")
+                    moved = True
+                    break
+
+            if not moved:
+                target = os.path.join(folder, "Others")
+                os.makedirs(target, exist_ok=True)
+                shutil.move(file_path, os.path.join(target, file))
+                log(f"Moved {file} → Others")
+
+    print("Organization complete.")
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="File Organizer Tool")
+    parser.add_argument("path", help="Folder path to organize")
+
+    args = parser.parse_args()
+    organize(args.path)
