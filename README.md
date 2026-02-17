@@ -1,6 +1,5 @@
-# File Organizer Automation
-
-Day 1 automation script.
-Organizes files into folders by type.
-
-Built by Lohith 🚀
+## Day 1
+Built file organizer script
+Fixed Git remote issue
+Merged repo histories
+Streak started
