@@ -1,5 +1,4 @@
 #Day 4
-
 Commit
 officially locked 🟩
 You fixed encoding + handled Git sync
